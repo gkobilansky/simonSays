@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>simonSays</title>
+    <link rel="stylesheet" href="app.css">
+<script src="app.js"></script>    
+</head>
+<body>
+<h1>Simon Says</h1>
+
+<script type="text/javascript">
+    var game = new SimonSays.Game(document.documentElement);
+
+    window.onload = function() {
+        game.start();
+    };
+</script>
+<button onclick="game.update();">Play</button>
+<button onclick="game.pause();">Pause</button>
+<button onclick="game.unpause();">Unpause</button>        
+</body>
+</html>
