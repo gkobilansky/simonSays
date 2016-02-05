@@ -17,16 +17,9 @@ const SimonSays = {};
         this.scoreBoard = new SimonSays.Scoreboard();
         //    this.input = new SimonSays.Input();
         this.background = new SimonSays.Background();
-        //    this.simon = new SimonSays.Simon();
-        this.humanPlays = [];
-        this.humanPlay = function (event) {
-
-            this.humanPlays.push($(event.target).attr('id'));
-            console.log('hello', this.humanPlays);
-
-        };
 
     };
+
 
     SimonSays.Game.prototype = {
 
@@ -43,6 +36,7 @@ const SimonSays = {};
         oldTime: 0,
 
         simonPlays: [],
+        humanPlays: [],
 
         player: null,
 
@@ -62,11 +56,6 @@ const SimonSays = {};
             this.scoreBoard.draw(this.round, this.board);
         },
 
-        pause: function () {
-            this.paused = true;
-            // ...
-        },
-
         setElement: function (element) {
             this.element = element;
             this.document = this.element.ownerDocument;
@@ -74,24 +63,56 @@ const SimonSays = {};
         },
 
         start: function () {
-            this.draw();
             this.player = 'simon';
+            this.simonPlay();
+        },
+
+        pause: function () {
+            this.paused = true;
+            // ...
         },
 
         unpause: function () {
             this.paused = false;
-            this.onAnimate(this.round);
         },
 
-        update: function () {
+        humanPlay: function (event) {
+
+            const move = Number($(event.target).attr('id'));
+
+            this.humanPlays.push(move);
+            console.log('hello', this.humanPlays, this.simonPlays);
+            this.comparePlays(move);
+        },
+
+
+        simonPlay: function () {
+
+            this.round++;
+            this.humanPlays = [];
 
             // create a random play for each round and send to board object
             this.simonPlays.push(Math.floor(Math.random() * 4));
             this.board.play(this.simonPlays);
-            this.round++;
             this.scoreBoard.update(this.round);
-
         },
+
+        comparePlays: function (move) {
+
+            //  console.log(this.humanPlays.length);
+
+            const gameCheck = move === this.simonPlays[this.humanPlays.length - 1];
+
+            if (!gameCheck) {
+                console.log('Try Again', gameCheck);
+                this.humanPlays = [];
+                this.board.play(this.simonPlays);
+            } else if (this.humanPlays.length === this.simonPlays.length) {
+                console.log('compare', gameCheck);
+                this.simonPlay();
+            }
+
+        }
 
     };
 
@@ -204,5 +225,18 @@ const SimonSays = {};
             gameBoard.style.backgroundImage = this.backgroundUrl;
         }
     };
+
+
+    // Array compare helper function
+
+    function arraysAreIdentical(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (var i = 0, len = arr1.length; i < len; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }());
