@@ -13,13 +13,13 @@
 		},
 	"\/app.js": {
 		"fileType": 64,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/app.js",
 		"outputAbbreviatedPath": "\/min\/app-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
+		"outputStyle": 0,
 		"syntaxCheckerStyle": 1
 		},
 	"\/img\/retina_wood.png": {
@@ -52,17 +52,6 @@
 		"outputAbbreviatedPath": "No Output Path",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
-		},
-	"\/min\/app-min.js": {
-		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/min\/app-min.js",
-		"outputAbbreviatedPath": "\/min\/min\/app-min-min.js",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
-		"syntaxCheckerStyle": 1
 		}
 	},
 "hooks": [
@@ -255,14 +244,14 @@
 	"jadeAutoOutputPathStyle": 0,
 	"jadeCompileDebug": 1,
 	"jadeOutputStyle": 0,
-	"javascriptAutoOutputPathEnabled": 1,
+	"javascriptAutoOutputPathEnabled": 0,
 	"javascriptAutoOutputPathFilenamePattern": "*-min.js",
 	"javascriptAutoOutputPathRelativePath": "\/min",
 	"javascriptAutoOutputPathReplace1": "",
 	"javascriptAutoOutputPathReplace2": "",
 	"javascriptAutoOutputPathStyle": 2,
 	"javascriptCreateSourceMap": 1,
-	"javascriptOutputStyle": 1,
+	"javascriptOutputStyle": 0,
 	"javascriptSyntaxCheckerStyle": 1,
 	"jsCheckerReservedNamesString": "",
 	"jsHintFlags2": {

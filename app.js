@@ -13,7 +13,6 @@ const SimonSays = {};
         // this.start = this.start.bind(this);
 
         this.board = new SimonSays.Board();
-        this.button = new SimonSays.Button();
         this.scoreBoard = new SimonSays.Scoreboard();
         //    this.input = new SimonSays.Input();
         this.background = new SimonSays.Background();
@@ -81,7 +80,8 @@ const SimonSays = {};
             const move = Number($(event.target).attr('id'));
 
             this.humanPlays.push(move);
-            console.log('hello', this.humanPlays, this.simonPlays);
+            this.board.play(this.humanPlays.slice(-1));
+            console.log(this.humanPlays, this.simonPlays);
             this.comparePlays(move);
         },
 
@@ -104,12 +104,16 @@ const SimonSays = {};
             const gameCheck = move === this.simonPlays[this.humanPlays.length - 1];
 
             if (!gameCheck) {
-                console.log('Try Again', gameCheck);
+                console.log('compare', gameCheck);
                 this.humanPlays = [];
-                this.board.play(this.simonPlays);
+                setTimeout(function () {
+                    game.board.play(game.simonPlays)
+                }, 1000);
             } else if (this.humanPlays.length === this.simonPlays.length) {
                 console.log('compare', gameCheck);
-                this.simonPlay();
+                setTimeout(function () {
+                    game.simonPlay();
+                }, 1000);
             }
 
         }
@@ -137,7 +141,8 @@ const SimonSays = {};
             element.body.appendChild(this.boardHtml);
             this.boardHtml.className = 'board';
 
-            for (var i = 0; i < this.buttonCount; i++) {
+            let i;
+            for (i = 0; i < this.buttonCount; i++) {
 
                 this.buttons[i] = new SimonSays.Button();
                 this.buttons[i].color = this.colors[i];
@@ -149,16 +154,17 @@ const SimonSays = {};
             console.log(this);
         },
 
-        play: function (simonPlays) {
+        play: function (moves) {
 
-            const buttonHtmlArr = [],
-                buttons = this.buttons;
+            console.log(moves);
 
-            simonPlays.forEach(function (e) {
-                buttonHtmlArr.push($(buttons[e].buttonHtml));
+            const nodes = $.map(moves, function (id) {
+                return document.getElementById(id);
             });
 
-            $(buttonHtmlArr).each(function (i, el) {
+            console.log(nodes);
+
+            $(nodes).each(function (i, el) {
                 window.setTimeout(function () {
                     $(el)
                         .animate({
@@ -167,11 +173,28 @@ const SimonSays = {};
                         .animate({
                             opacity: 1
                         }, 300);
-                }, 500 * i);
+                }, 1000 * i);
 
             });
-        }
+
+        },
+
     };
+
+
+    //
+    //            console.log('passing moves', document.getElementById(move));
+    //
+    //
+    //            $(document.getElementById(move))
+    //                .animate({
+    //                    opacity: 0.25
+    //                }, 300)
+    //                .animate({
+    //                    opacity: 1
+    //                }, 300);
+
+
 
     //Buttons
 
