@@ -99,7 +99,7 @@ const SimonSays = {};
 
         comparePlays: function (move) {
 
-            //  console.log(this.humanPlays.length);
+            //  Should I be calling game.board and game.simonPlay here?
 
             const gameCheck = move === this.simonPlays[this.humanPlays.length - 1];
 
@@ -156,8 +156,6 @@ const SimonSays = {};
 
         play: function (moves) {
 
-            console.log(moves);
-
             const nodes = $.map(moves, function (id) {
                 return document.getElementById(id);
             });
@@ -165,17 +163,26 @@ const SimonSays = {};
             console.log(nodes);
 
             $(nodes).each(function (i, el) {
-                window.setTimeout(function () {
+                setTimeout(function () {
                     $(el)
                         .animate({
                             opacity: 0.25
-                        }, 300)
+                        }, 300, playSound)
                         .animate({
                             opacity: 1
                         }, 300);
                 }, 1000 * i);
 
             });
+
+            function playSound() {
+                const val = $(this).val();
+                const id = this.id;
+                const soundUrl = game.board.buttons[id].sound;
+                const a = new Audio(soundUrl);
+
+                a.play();
+            }
 
         },
 
