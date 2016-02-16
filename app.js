@@ -6,7 +6,7 @@ const SimonSays = {};
 
 (function () {
 
-    "use strict";
+    //  "use strict";
 
     SimonSays.Game = function (element) {
         this.setElement(element);
@@ -14,7 +14,6 @@ const SimonSays = {};
         this.board = new SimonSays.Board();
         this.scoreBoard = new SimonSays.Scoreboard();
         this.background = new SimonSays.Background();
-
     };
 
 
@@ -90,7 +89,6 @@ const SimonSays = {};
 
             //  Should I be calling game.board and game.simonPlay here?
             // TODO: Refactor
-
             const gameCheck = move === this.simonPlays[this.humanPlays.length - 1];
 
             this.stopListen();
@@ -118,13 +116,11 @@ const SimonSays = {};
                         game.simonPlay();
                     }, 1000);
                 }
-            } else { // Listen after each human click, unless it's simons turn
+            } else { // Listen after each human click, unless it's Simon's turn
                 this.listen();
             }
         }
-
     };
-
 
     // Board
     SimonSays.Board = function () {
