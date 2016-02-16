@@ -141,8 +141,7 @@ const SimonSays = {};
             element.body.appendChild(this.boardHtml);
             this.boardHtml.className = 'board';
 
-            let i;
-            for (i = 0; i < this.buttonCount; i++) {
+            for (var i = 0; i < this.buttonCount; i++) {
                 this.buttons[i] = new SimonSays.Button();
                 this.buttons[i].color = this.colors[i];
                 this.buttons[i].sound = this.sounds[i];
