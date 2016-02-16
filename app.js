@@ -10,48 +10,43 @@ const SimonSays = {};
 
     SimonSays.Game = function (element) {
         this.setElement(element);
-        // this.start = this.start.bind(this);
+        this.start = this.start.bind(this);
 
         this.board = new SimonSays.Board();
         this.scoreBoard = new SimonSays.Scoreboard();
-        //    this.input = new SimonSays.Input();
         this.background = new SimonSays.Background();
 
     };
 
 
     SimonSays.Game.prototype = {
-
         title: 'simonSays',
-
         document: null,
-
         element: null,
-
-        input: null,
-
-        paused: false,
-
-        oldTime: 0,
-
         simonPlays: [],
         humanPlays: [],
-
-        player: null,
-
+        strict: false,
         round: 0,
-
         userInterface: null,
-
         window: null,
-
         constructor: SimonSays.Game,
 
-        draw: function () {
+        toggleStrict: function () {
+            $('.mode').toggleClass('on');
+            this.strict = !this.strict;
+        },
 
+        listen: function () {
+            $("body").one('click', '.square', boundHumanPlay);
+        },
+
+        stopListen: function () {
+            $("body").off('click', '.square');
+        },
+
+        draw: function () {
             this.background.draw(this.element);
             this.board.draw(this.document);
-            //this.button.draw();
             this.scoreBoard.draw(this.round, this.board);
         },
 
@@ -62,23 +57,16 @@ const SimonSays = {};
         },
 
         start: function () {
-            this.player = 'simon';
+            this.round = 0;
+            this.simonPlays = [];
+            console.log(this.simonPlays);
             this.simonPlay();
         },
 
-        pause: function () {
-            this.paused = true;
-            // ...
-        },
-
-        unpause: function () {
-            this.paused = false;
-        },
-
         humanPlay: function (event) {
-
             const move = Number($(event.target).attr('id'));
 
+            this.stopListen();
             this.humanPlays.push(move);
             this.board.play(this.humanPlays.slice(-1));
             console.log(this.humanPlays, this.simonPlays);
@@ -87,7 +75,7 @@ const SimonSays = {};
 
 
         simonPlay: function () {
-
+            this.stopListen();
             this.round++;
             this.humanPlays = [];
 
@@ -95,6 +83,8 @@ const SimonSays = {};
             this.simonPlays.push(Math.floor(Math.random() * 4));
             this.board.play(this.simonPlays);
             this.scoreBoard.update(this.round);
+            setTimeout(this.listen, 500 * this.simonPlays.length);
+
         },
 
         comparePlays: function (move) {
@@ -103,19 +93,36 @@ const SimonSays = {};
 
             const gameCheck = move === this.simonPlays[this.humanPlays.length - 1];
 
+            this.stopListen();
+
             if (!gameCheck) {
                 console.log('compare', gameCheck);
                 this.humanPlays = [];
-                setTimeout(function () {
-                    game.board.play(game.simonPlays)
-                }, 1000);
-            } else if (this.humanPlays.length === this.simonPlays.length) {
-                console.log('compare', gameCheck);
-                setTimeout(function () {
-                    game.simonPlay();
-                }, 1000);
-            }
+                this.scoreBoard.woops();
 
+                if (this.strict) {
+                    setTimeout(game.start, 1000);
+                } else {
+                    setTimeout(function () {
+                        game.board.play(game.simonPlays);
+                        game.scoreBoard.update(game.round);
+                        setTimeout(game.listen, 500 * game.simonPlays.length);
+                    }, 1000);
+                }
+            } else if (this.humanPlays.length === this.simonPlays.length) {
+
+                if (this.round >= 20) {
+                    return this.scoreBoard.win();
+                } else {
+
+                    console.log('compare', gameCheck);
+                    setTimeout(function () {
+                        game.simonPlay();
+                    }, 1000);
+                }
+            } else {
+                this.listen(); // eventlistenr?
+            }
         }
 
     };
@@ -126,7 +133,7 @@ const SimonSays = {};
         this.buttonCount = 4;
         this.boardHtml = document.createElement('div');
         this.buttons = [];
-        this.colors = ['red', 'green', 'yellow', 'blue'];
+        this.colors = ['red', 'green', '#cca707', 'blue'];
         this.sounds = ['https://s3.amazonaws.com/freecodecamp/simonSound1.mp3',
                    'https://s3.amazonaws.com/freecodecamp/simonSound2.mp3',
                    'https://s3.amazonaws.com/freecodecamp/simonSound3.mp3',
@@ -156,6 +163,8 @@ const SimonSays = {};
 
         play: function (moves) {
 
+            game.stopListen();
+
             const nodes = $.map(moves, function (id) {
                 return document.getElementById(id);
             });
@@ -171,9 +180,11 @@ const SimonSays = {};
                         .animate({
                             opacity: 1
                         }, 300);
-                }, 1000 * i);
+                }, 500 * i);
 
             });
+
+            //            setTimeout(game.listen, 500 * nodes.length);
 
             function playSound() {
                 const val = $(this).val();
@@ -183,25 +194,9 @@ const SimonSays = {};
 
                 a.play();
             }
-
         },
 
     };
-
-
-    //
-    //            console.log('passing moves', document.getElementById(move));
-    //
-    //
-    //            $(document.getElementById(move))
-    //                .animate({
-    //                    opacity: 0.25
-    //                }, 300)
-    //                .animate({
-    //                    opacity: 1
-    //                }, 300);
-
-
 
     //Buttons
 
@@ -232,16 +227,26 @@ const SimonSays = {};
 
     SimonSays.Scoreboard.prototype = { // creates an element in board div that tracks rounds NOTE: update not working yet
         draw: function (round, board) {
+            //            this.round = round;
             this.scoreboardHtml = document.createElement('div');
             this.scoreboardHtml.className = 'scoreboard';
-            this.scoreboardHtml.innerHTML = round;
-            board.boardHtml.appendChild(this.scoreboardHtml);
+            $(".scoreboardContainer").append(this.scoreboardHtml);
 
         },
 
         update: function (round) {
-            this.scoreboardHtml.innerHTML = round;
-        }
+            $(this.scoreboardHtml).html("<h2>Scoreboard</h2><p>round: " + round + "</p>");
+        },
+
+        woops: function () {
+            $(this.scoreboardHtml).html("<h2>WOOPS!</h2>");
+
+        },
+
+        win: function () {
+            $(this.scoreboardHtml).html("<h2>YOU WIN!</h2><p>Click restart to play again</p>");
+
+        },
 
     };
 
